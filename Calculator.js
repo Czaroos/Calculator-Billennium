@@ -30,6 +30,7 @@ export default class Calculator {
   };
 
   digitOnClick = (value) => {
+    this.showHistory();
     this.userInput = this.userInput + value;
     document.getElementById('userInput').innerHTML = this.userInput;
   };
@@ -52,17 +53,30 @@ export default class Calculator {
       this.history.push(value);
       this.showHistory();
       this.userInput = '';
-    } else {
-      this.history.pop();
-      this.history.push(value);
-      this.showHistory();
+      console.log(this.history);
     }
   };
 
   equalsOperatorOnClick = (value) => {
-    if (this.userInput !== '') {
+    if (this.userInput !== '' && this.history.length >= 2) {
+      //clear entry (for operator change)
+      this.history.push(this.userInput);
+      this.history.push(value);
+      console.log(this.history.length);
+      this.buffer = this.performOperation(
+        this.history[this.history.length - 3],
+        parseFloat(
+          this.history.length !== 4
+            ? this.buffer
+            : this.history[this.history.length - 2]
+        ),
+        parseFloat(this.userInput)
+      );
+      this.showHistory();
       console.log(this.buffer);
-      console.log(this.history);
+      document.getElementById('userInput').innerHTML = this.buffer;
+      this.history = [];
+      this.userInput = '';
     }
   };
 
@@ -71,6 +85,7 @@ export default class Calculator {
   };
 
   performOperation = (operator, valA, valB) => {
+    console.log(valA, operator, valB);
     switch (operator) {
       case '+':
         return valA + valB;
