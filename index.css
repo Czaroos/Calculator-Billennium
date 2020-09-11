@@ -1,0 +1,64 @@
+* {
+  box-sizing: border-box;
+  color: #fff;
+  text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
+}
+
+button {
+  outline: none;
+}
+
+.digit {
+  background-color: #9fadb6;
+  font-size: 1.2rem;
+}
+
+.digit :hover {
+  background-color: #113951;
+}
+
+.display {
+  background-color: #032336;
+  border: 1px #000;
+  display: flex;
+  flex-direction: column;
+  height: 90px;
+  opacity: 0.5;
+  padding: 10px;
+  text-align: right;
+  width: 360px;
+}
+
+.grid {
+  display: grid;
+  grid-template-rows: 90px 90px 90px 90px 90px;
+  grid-template-columns: 90px 90px 90px 90px;
+}
+
+#history {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.4rem;
+  overflow: hidden;
+}
+
+input {
+  background-color: #032336;
+  border: 1px #000;
+  font-size: 2rem;
+  height: 45px;
+  opacity: 0.5;
+  outline: none;
+  padding-right: 10px;
+  text-align: right;
+  width: 360px;
+}
+
+.operator {
+  background-color: #6f8fa2;
+  font-size: 1.4rem;
+}
+
+#userInput {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 2rem;
+}
