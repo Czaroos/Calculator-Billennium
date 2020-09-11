@@ -62,13 +62,14 @@ export default class Calculator {
       //clear entry (for operator change)
       this.history.push(this.userInput);
       this.history.push(value);
-      console.log(this.history.length);
+      console.log(this.history);
+      console.log(this.userInput);
       this.buffer = this.performOperation(
         this.history[this.history.length - 3],
         parseFloat(
           this.history.length !== 4
             ? this.buffer
-            : this.history[this.history.length - 2]
+            : this.history[this.history.length - 4]
         ),
         parseFloat(this.userInput)
       );
