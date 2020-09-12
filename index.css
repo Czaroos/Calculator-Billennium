@@ -29,6 +29,11 @@ button {
   width: 360px;
 }
 
+#dot {
+  background-color: #6f8fa2;
+  font-size: 1.4rem;
+}
+
 .grid {
   display: grid;
   grid-template-rows: 90px 90px 90px 90px 90px;

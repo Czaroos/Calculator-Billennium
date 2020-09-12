@@ -9,9 +9,10 @@ export default class Calculator {
 
   initializeOnKeyDownEvent = () => {
     document.querySelector('body').addEventListener('keydown', (e) => {
-      if (!isNaN(e.key)) this.digitOnClick(e.key);
+      if (!isNaN(e.key) || e.key === '.') this.digitOnClick(e.key);
       if (['/', 'x', '+', '-'].includes(e.key))
         this.twoArgOperatorOnClick(e.key);
+      if (e.key === '=') this.equalsOperatorOnClick(e.key);
     });
   };
 
@@ -19,6 +20,15 @@ export default class Calculator {
     this.initializeOnClickEvent('digit', this.digitOnClick);
     this.initializeOnClickEvent('operator twoArg', this.twoArgOperatorOnClick);
     this.initializeOnClickEvent('equals', this.equalsOperatorOnClick);
+    this.initializeOnClickEvent(
+      'operator clearEntry',
+      this.clearEntryOperatorOnClick
+    );
+    this.initializeOnClickEvent(
+      'operator clearAll',
+      this.clearAllOperatorOnClick
+    );
+    this.initializeOnClickEvent('operator oneArg', this.oneArgOperatorOnClick);
   };
 
   initializeOnClickEvent = (className, onClickFn) => {
@@ -29,13 +39,68 @@ export default class Calculator {
     }
   };
 
-  digitOnClick = (value) => {
-    this.showHistory();
-    this.userInput = this.userInput + value;
+  showHistory = () => {
+    console.log(this.history);
+    document.getElementById('history').innerHTML = this.history.join(' ');
+  };
+
+  clearEntryOperatorOnClick = () => {
+    this.userInput = '';
     document.getElementById('userInput').innerHTML = this.userInput;
   };
 
-  twoArgOperatorOnClick = (value) => {
+  clearAllOperatorOnClick = () => {
+    this.clearEntryOperatorOnClick();
+    this.history = [];
+    this.buffer = 0;
+    this.showHistory();
+  };
+
+  digitOnClick = (value) => {
+    if (this.userInput === '0' && value !== '.') {
+      this.userInput = this.userInput.slice(0, -1);
+    }
+    this.userInput = this.userInput + value;
+    this.showHistory();
+    document.getElementById('userInput').innerHTML = this.userInput;
+  };
+
+  equalsOperatorOnClick = (value) => {
+    if (this.userInput !== '' && this.history.length >= 2) {
+      this.history.push(this.userInput);
+      this.history.push(value);
+      this.buffer = this.performOperation(
+        this.history[this.history.length - 3],
+        parseFloat(
+          this.history.length !== 4
+            ? this.buffer
+            : this.history[this.history.length - 4]
+        ),
+        parseFloat(this.userInput)
+      );
+      this.showHistory();
+      document.getElementById('userInput').innerHTML = this.buffer;
+      this.history = [];
+      this.userInput = '';
+    }
+  };
+
+  oneArgOperatorOnClick = (operator) => {
+    if (this.userInput !== '') {
+      this.equalsOperatorOnClick();
+      let value = this.userInput ? this.userInput : this.buffer;
+      this.history =
+        operator === '√' ? [operator, value, '='] : [value, operator, '='];
+      this.buffer = this.performOperation(operator, value);
+      this.showHistory();
+      document.getElementById('userInput').innerHTML = this.buffer;
+      this.history = [];
+      this.userInput = '';
+      this.buffer = 0;
+    }
+  };
+
+  twoArgOperatorOnClick = (operator) => {
     if (this.userInput !== '') {
       this.history.push(this.userInput);
       if (this.history.length >= 3) {
@@ -50,39 +115,17 @@ export default class Calculator {
         );
         document.getElementById('userInput').innerHTML = this.buffer;
       }
-      this.history.push(value);
+      this.history.push(operator);
       this.showHistory();
       this.userInput = '';
-      console.log(this.history);
     }
-  };
-
-  equalsOperatorOnClick = (value) => {
-    if (this.userInput !== '' && this.history.length >= 2) {
-      //clear entry (for operator change)
-      this.history.push(this.userInput);
-      this.history.push(value);
-      console.log(this.history);
-      console.log(this.userInput);
-      this.buffer = this.performOperation(
-        this.history[this.history.length - 3],
-        parseFloat(
-          this.history.length !== 4
-            ? this.buffer
-            : this.history[this.history.length - 4]
-        ),
-        parseFloat(this.userInput)
-      );
+    if (
+      this.history[this.history.length - 1] !== operator &&
+      this.history[this.history.length - 1]
+    ) {
+      this.history[this.history.length - 1] = operator;
       this.showHistory();
-      console.log(this.buffer);
-      document.getElementById('userInput').innerHTML = this.buffer;
-      this.history = [];
-      this.userInput = '';
     }
-  };
-
-  showHistory = () => {
-    document.getElementById('history').innerHTML = this.history.join(' ');
   };
 
   performOperation = (operator, valA, valB) => {
@@ -102,10 +145,10 @@ export default class Calculator {
       }
       case 'x':
         return valA * valB;
-      case '&sup2;':
+      case '²':
         return valA * valA;
-      case '&Sqrt;':
-        Math.sqrt(valA);
+      case '√':
+        return Math.sqrt(valA);
       default:
         return undefined;
     }
